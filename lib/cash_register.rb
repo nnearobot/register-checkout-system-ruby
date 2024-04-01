@@ -8,7 +8,12 @@ module CashRegister
 
   class ItemList
     def initialize
+      # [{ SKU: "A", price: 3000 }]
       @items = []
+
+      # {A: 1}
+      @item_counter = {}
+
       @net_price = 0
       @discount = 0
     end
@@ -16,9 +21,30 @@ module CashRegister
     def add_item(item)
       @items << item
 
+      # in case of the case-sensitive item SKU, remove downcasing:
+      sku = item[:SKU].downcase
+
+      if !@item_counter[sku]
+        @item_counter[sku] = {
+          count: 0,
+          item: item
+        }
+      end
+
+      @item_counter[sku][:count] += 1
+
       # reset the net price and discount as the items have changed
       @net_price = 0
       @discount = 0
+
+      self
+    end
+
+    def get_item(sku)
+      # in case of the case-sensitive item SKU, remove downcasing:
+      sku = sku.downcase
+
+      [@item_counter[sku][:item], @item_counter[sku][:count]]
     end
 
     def total_price

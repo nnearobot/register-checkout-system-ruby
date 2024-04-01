@@ -22,6 +22,11 @@ class TestCashRegister < Minitest::Test
     assert_equal 1137, cash_register.total_price
     assert_equal 0, cash_register.discount
     assert_equal 1137, cash_register.net_price
+
+    added_item, count = cash_register.get_item("A")
+    assert_equal 1137, added_item[:price]
+    assert_equal 1, count
+
   end
 
 
