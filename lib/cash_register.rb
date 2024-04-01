@@ -95,6 +95,8 @@ module CashRegister
         :set_of_3A,
         :set_of_2B,
         :net_price_over_15000
+
+        # add new rule here then add a method some_rule(item_list, current_net_price) #
       ]
     end
 
