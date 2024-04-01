@@ -8,6 +8,8 @@ This is a Ruby gem that represents a checkout system that meets the following re
 
 We assume that items with the same SKU have identical prices. If not, the price for a product with a particular SKU is based on the first occurrence of this item.
 
+Please check the files `lib/cash_register.rb` and `test/test_cash_register.rb` for the code reference.
+
 
 ## Usage
 
