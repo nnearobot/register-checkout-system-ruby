@@ -10,12 +10,11 @@ class TestCashRegister < Minitest::Test
 
   def test_empty_cart
     cash_register = CashRegister::ItemList.new
-    assert_equal 0,
-      cash_register.net_price
+    assert_equal 0, cash_register.net_price
   end
 
 
-  def test_add_item
+  def test_add_get_item
     cash_register = CashRegister::ItemList.new
     cash_register.add_item({ SKU: "A", price: 1137 })
 
@@ -51,6 +50,88 @@ class TestCashRegister < Minitest::Test
     assert_equal 11500, cash_register.total_price
     assert_equal 0, cash_register.discount
     assert_equal 11500, cash_register.net_price
+  end
+
+  def test_set_of_A
+    item = { SKU: "A", price: 3000 }
+    cash_register = CashRegister::ItemList.new
+
+    # 2 * 3000 = 6000
+    cash_register.add_item(item).add_item(item)
+    assert_equal 6000, cash_register.total_price
+    assert_equal 6000, cash_register.net_price
+    assert_equal 0, cash_register.discount
+
+    # 3: 7500
+    cash_register.add_item(item)
+    assert_equal 9000, cash_register.total_price
+    assert_equal 7500, cash_register.net_price
+    assert_equal 1500, cash_register.discount
+
+    # 4: 7500 + 3000 = 10500
+    cash_register.add_item(item)
+    assert_equal 12000, cash_register.total_price
+    assert_equal 10500, cash_register.net_price
+    assert_equal 1500, cash_register.discount
+
+    # 5: 7500 + 3000 + 3000 = 13500
+    cash_register.add_item(item)
+    assert_equal 15000, cash_register.total_price
+    assert_equal 13500, cash_register.net_price
+    assert_equal 1500, cash_register.discount
+
+    # 6: 7500 * 2 = 15000 (nov over 15000, so the rule "net_price_over_15000" does not apply)
+    cash_register.add_item(item)
+    assert_equal 18000, cash_register.total_price
+    assert_equal 15000, cash_register.net_price
+    assert_equal 3000, cash_register.discount
+  end
+
+  def test_set_of_B
+    item = { SKU: "B", price: 2000 }
+    cash_register = CashRegister::ItemList.new
+
+    # 1: 2000
+    cash_register.add_item(item)
+    assert_equal 2000, cash_register.total_price
+    assert_equal 2000, cash_register.net_price
+    assert_equal 0, cash_register.discount
+
+    # 2: 3500
+    cash_register.add_item(item)
+    assert_equal 4000, cash_register.total_price
+    assert_equal 3500, cash_register.net_price
+    assert_equal 500, cash_register.discount
+
+    # 3: 3500 + 2000 = 5500
+    cash_register.add_item(item)
+    assert_equal 6000, cash_register.total_price
+    assert_equal 5500, cash_register.net_price
+    assert_equal 500, cash_register.discount
+
+    # 4: 3500 * 2 = 7000
+    cash_register.add_item(item)
+    assert_equal 8000, cash_register.total_price
+    assert_equal 7000, cash_register.net_price
+    assert_equal 1000, cash_register.discount
+  end
+
+  def test_net_price_over_15000
+    item = { SKU: "A", price: 3000 }
+    cash_register = CashRegister::ItemList.new
+
+    6.times do
+      cash_register.add_item(item)
+    end
+    assert_equal 18000, cash_register.total_price
+    assert_equal 15000, cash_register.net_price
+    assert_equal 3000, cash_register.discount
+
+    # 7: 15000 + 3000 = 18000; 18000 - 2000 = 16000
+    cash_register.add_item(item)
+    assert_equal 21000, cash_register.total_price
+    assert_equal 16000, cash_register.net_price
+    assert_equal 5000, cash_register.discount
   end
 
 
