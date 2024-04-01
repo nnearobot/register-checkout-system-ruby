@@ -44,6 +44,8 @@ module CashRegister
       # in case of the case-sensitive item SKU, remove downcasing:
       sku = sku.downcase
 
+      return [nil, 0] if !@item_counter[sku]
+
       [@item_counter[sku][:item], @item_counter[sku][:count]]
     end
 
