@@ -135,5 +135,58 @@ class TestCashRegister < Minitest::Test
   end
 
 
+=begin
+   Basket              | Price
+  ---------------------|----------
+   A, B, C             | JPY 10000
+   B, A, B, A, A       | JPY 11000
+   C, B, A, A, D, A, B | JPY 15500
+   C, A, D, A, A       | JPY 14000
+=end
+
+  def test_from_tech_spec
+    items = {
+      A: { SKU: "A", price: 3000 },
+      B: { SKU: "B", price: 2000 },
+      C: { SKU: "C", price: 5000 },
+      D: { SKU: "D", price: 1500 },
+    }
+
+    cash_register = CashRegister::ItemList.new
+    cash_register
+    .add_item(items[:A])
+    .add_item(items[:B])
+    .add_item(items[:C])
+    assert_equal 10000, cash_register.net_price
+
+    cash_register = CashRegister::ItemList.new
+    cash_register
+      .add_item(items[:B])
+      .add_item(items[:A])
+      .add_item(items[:B])
+      .add_item(items[:A])
+      .add_item(items[:A])
+    assert_equal 11000, cash_register.net_price
+
+    cash_register = CashRegister::ItemList.new
+    cash_register
+      .add_item(items[:C])
+      .add_item(items[:B])
+      .add_item(items[:A])
+      .add_item(items[:A])
+      .add_item(items[:D])
+      .add_item(items[:A])
+      .add_item(items[:B])
+    assert_equal 15500, cash_register.net_price
+
+    cash_register = CashRegister::ItemList.new
+    cash_register
+      .add_item(items[:C])
+      .add_item(items[:A])
+      .add_item(items[:D])
+      .add_item(items[:A])
+      .add_item(items[:A])
+    assert_equal 14000, cash_register.net_price
+  end
 
 end
